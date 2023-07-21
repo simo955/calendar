@@ -47,6 +47,7 @@ import getWebhooks from "@calcom/features/webhooks/lib/getWebhooks";
 import { isPrismaObjOrUndefined, parseRecurringEvent } from "@calcom/lib";
 import { getVideoCallUrlFromCalEvent } from "@calcom/lib/CalEventParser";
 import { checkRateLimitAndThrowError } from "@calcom/lib/checkRateLimitAndThrowError";
+import { checkOncePerUserLimitAndThrowError } from "@calcom/lib/checkOncePerUserLimitAndThrowError";
 import { getDefaultEvent, getGroupName, getUsernameList } from "@calcom/lib/defaultEvents";
 import { getErrorFromUnknown } from "@calcom/lib/errors";
 import getIP from "@calcom/lib/getIP";
@@ -721,6 +722,8 @@ async function handler(
     isNotAnApiCall,
     eventType,
   });
+  
+  await checkOncePerUserLimitAndThrowError(bookerEmail);
 
   const tAttendees = await getTranslation(language ?? "en", "common");
   const tGuests = await getTranslation("en", "common");
